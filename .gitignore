@@ -1,4 +1,4 @@
-/node_modules/*
+/src/node_modules/*
 /toBeRemoved/*
 *.DS_Store
-/config/db.js
+src/config/*
