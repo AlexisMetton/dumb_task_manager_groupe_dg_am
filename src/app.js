@@ -23,8 +23,10 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // View engine setup
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Models
 const db = require('./config/db');
@@ -35,10 +37,12 @@ const taskRoutes = require('./routes/tasks');
 const adminRoutes = require('./routes/admin');
 
 app.get('/', (req, res) => {
-    console.log(req.query)
-    var userId = req.query.userId
-    res.render('index', { userId: userId })
-})
+    console.log(req.query);
+    res.render('index', { 
+        userId: req.query.userId,
+        user: req.session.user || null 
+    });
+});
 app.use('/', authRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/admin', adminRoutes)
