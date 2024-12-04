@@ -1,50 +1,55 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-
-const db = new sqlite3.Database(path.join(__dirname, '../config/tasks.sqlite'), (err) => {
-});
-
+const pool = require('../config/db');
 
 const User = {
-    create: (user, callback) => {
-        const query = 'INSERT INTO users (username, password, email) VALUES (?, ?, ?)';
-        const params = [user.username, user.password, user.email];
-        db.run(query, params, function (err) {
-            callback(null, { id: this.lastID, ...user });
-        });
+    create: async (user) => {
+        const roles = user.roles ? JSON.stringify(user.roles) : JSON.stringify(['ROLE_USER']);
+        const query = 'INSERT INTO users (username, password, email, roles) VALUES (?, ?, ?, ?)';
+        const params = [user.username, user.password, user.email, roles];
+        const [result] = await pool.execute(query, params);
+        return { id: result.insertId, ...user, roles: JSON.parse(roles) };
     },
 
-    getAll: (callback) => {
-        db.all('SELECT * FROM users', [], (err, results) => {
-            callback(results)
-        })
-    },
+    getAll: async () => {
+        const query = 'SELECT * FROM users';
+        try {
+            const [results] = await pool.execute(query);
+            return results;
+        } catch (err) {
+            throw new Error('Error fetching all users: ' + err.message);
+        }
+    },   
 
-    findByUsername: (username, callback) => {
-        console.log(username)
+    findByUsername: async (username) => {
         const query = 'SELECT * FROM users WHERE username = ?';
-        db.get(query, [username], (err, user) => {
-            callback(err, user)
-        });
+        const [rows] = await pool.execute(query, [username]);
+        return rows[0];
     },
 
-    authenticate: (username, password, callback) => {
-        User.findByUsername(username, (err, user) => {
-            console.log({ user, password})
-            if (user.password == password)  {
-                user.connected = true;
-                return callback(user)
-            }
-        });
+    findByUsernameOrEmail: async (username, email) => {
+        const query = 'SELECT * FROM users WHERE username = ? OR email = ?';
+        const [rows] = await pool.execute(query, [username, email]);
+        return rows[0];
     },
 
-    // Récupération d'un utilisateur par ID
-    findById: (id, callback) => {
-        const query = 'SELECT * FROM users WHERE id = ' + id;
-        db.get(query, [], (err, user) => {
-            return user
-        });
-    }
+    findById: async (id) => {
+        const query = 'SELECT * FROM users WHERE id = ?';
+        const [rows] = await pool.execute(query, [id]);
+        if (rows.length) {
+            rows[0].roles = JSON.parse(rows[0].roles);
+            return rows[0];
+        }
+        return null;
+    },
+
+    delete: async (id) => {
+        const query = 'DELETE FROM users WHERE id = ?';
+        await pool.execute(query, [id]);
+    },
+
+    updateRoles: async (id, roles) => {
+        const query = 'UPDATE users SET roles = ? WHERE id = ?';
+        await pool.execute(query, [JSON.stringify(roles), id]);
+    },
 };
 
 module.exports = User;

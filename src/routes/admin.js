@@ -1,13 +1,12 @@
 const express = require('express');
+const adminController = require('../controllers/adminController');
+const authorizeAdmin = require('../middlewares/authorizeAdmin');
 const router = express.Router();
-const users = require('../models/user');
 
+router.use(authorizeAdmin);
 
-router.get('/', (req, res) => {
-    users.getAll((users) => {
-        res.render('admin', { users })
-    })
-
-})
+router.get('/', adminController.listUsers);
+router.post('/update-roles', adminController.updateRoles);
+router.post('/delete/:userId', adminController.deleteUser);
 
 module.exports = router;
