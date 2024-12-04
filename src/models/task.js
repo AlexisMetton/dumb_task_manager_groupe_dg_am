@@ -10,11 +10,11 @@ const Task = {
     getTaskId: async (taskId) => {
         const query = 'SELECT * FROM tasks WHERE id = ?';
         const [rows] = await pool.execute(query, [taskId]);
-        let err
+        
         if(!rows){
             return {error: "Task not found"}
         }
-        return {task: rows};
+        return {task: rows[0]};
     },
 
     create: async (task) => {
