@@ -1,21 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin section</title>
-</head>
-<body>
-    <p>Welcome to admin section</p>
-    <p>users : </p>
-    <div class="users_list">
-        <ul>
-        <% users.map((user)=> { %>
-            <li>username: <%= user.username %> - 
-                <a href="/admin/delete-user?idToDelete=<%= user.id %>">Remove User</a></li>
-        <% }) %>
-        </ul>
-    </div>
-    <br/>
-</body>
-</html>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% users.forEach(user => { %>
+        <tr>
+            <td><%= user.id %></td>
+            <td><%= user.username %></td>
+            <td><%= user.email %></td>
+            <td>
+                <form action="/admin/update-roles" method="POST">
+                    <input type="hidden" name="userId" value="<%= user.id %>">
+                    <input type="text" name="roles" value="<%= user.roles.join(', ') %>">
+                    <button type="submit">Update Roles</button>
+                </form>
+            </td>
+            <td>
+                <form action="/admin/delete/<%= user.id %>" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <% }); %>
+    </tbody>
+</table>
