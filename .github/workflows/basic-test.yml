@@ -15,8 +15,9 @@ jobs:
             ref: ${{ github.sha }}
 
       - name: Install deps
-        working-directory: src
+        working-directory: ./src
         run: npm i
 
       - name: Run tests
+        working-directory: ./src
         run: npm run test
