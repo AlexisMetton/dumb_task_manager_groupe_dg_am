@@ -1,8 +1,8 @@
 name: Simple test
 
 on: 
-  workflow_dispatch: ~
   push: ~
+  workflow_dispatch: ~
 
 jobs: 
   runTest:
@@ -15,6 +15,7 @@ jobs:
             ref: ${{ github.sha }}
 
       - name: Install deps
+        working-directory: src
         run: npm i
 
       - name: Run tests
