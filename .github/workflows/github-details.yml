@@ -1,0 +1,18 @@
+name: github-details
+
+on: 
+  workflow_dispatch: ~
+  push: ~
+
+jobs: 
+  getGithubDetails:
+    name: Get GitHubInfos
+    runs-on: ubuntu-latest
+    steps: 
+      - name: "Get GitHub details"
+        id: ghdetails
+        shell: bash
+        run: |
+            echo ${GITHUB_CONTEXT}
+        env: 
+            GITHUB_CONTEXT: ${{ toJson(github) }}
