@@ -4,10 +4,9 @@ const users = require('../models/user');
 
 
 router.get('/', (req, res) => {
-    users.getAll((users) => {
-        res.render('admin', { users })
-    })
-
-})
+    users.getAll((err, users) => {
+        res.render('admin', { users: users });
+    });
+});
 
 module.exports = router;

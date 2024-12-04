@@ -34,14 +34,15 @@ const Task = {
     },
 
     update: (id, updates, callback) => {
-        const query = `
-            UPDATE tasks
-            SET title = ?, description = ?, completed = ?
-            WHERE id = ?
-        `;
-        const params = [updates.title, updates.description, updates.completed, id];
-        db.run(query, params, function (err) {
-            callback(null, { id, ...updates });
+        const query = 'UPDATE tasks SET completed = ? WHERE id = ?';
+        const params = [updates.completed, id];
+        
+        db.run(query, params, function(err) {
+            if (err) {
+                console.error('Erreur SQL:', err);
+                return callback(err);
+            }
+            callback(null, { id: id, completed: updates.completed });
         });
     },
 
