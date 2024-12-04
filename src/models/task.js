@@ -7,6 +7,16 @@ const Task = {
         return rows;
     },
 
+    getTaskId: async (taskId) => {
+        const query = 'SELECT * FROM tasks WHERE id = ?';
+        const [rows] = await pool.execute(query, [taskId]);
+        let err
+        if(!rows){
+            return {error: "Task not found"}
+        }
+        return {task: rows};
+    },
+
     create: async (task) => {
         const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES (?, ?, ?, ?)';
         const params = [task.title, task.description, task.completed, task.user_id];
