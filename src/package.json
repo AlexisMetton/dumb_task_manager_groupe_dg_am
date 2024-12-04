@@ -8,6 +8,8 @@
     "dev": "nodemon app.js",
     "docker-start": "docker compose up",
     "test": "jest",
+    "test:models": "jest src/tests/models",
+    "test:routes": "jest src/tests/routes",
     "tailwind:css": "postcss public/css/tailwind.css -o public/css/styles.css"
   },
   "dependencies": {

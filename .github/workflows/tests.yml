@@ -1,4 +1,4 @@
-name: Simple test
+name: Test application
 
 on: 
   push: ~
@@ -6,7 +6,7 @@ on:
 
 jobs: 
   runTest:
-    name: execute simple test
+    name: execute test
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout
@@ -18,6 +18,10 @@ jobs:
         working-directory: ./src
         run: npm i
 
-      - name: Run tests
+      - name: Run model tests
+        run: npm run test:models
         working-directory: ./src
-        run: npm run test
+
+      - name: Run route tests
+        run: npm run test:routes
+        working-directory: ./src
