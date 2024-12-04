@@ -42,7 +42,7 @@
 - **Impact :**
   - L'absence de tests expose le projet à des erreurs lors de futures modifications ou ajouts de fonctionnalités.
 
-  | Composant     | État | Forces                                 | Faiblesses                                         | Améliorations Proposées                                                |
+| Composant     | État | Forces                                 | Faiblesses                                         | Améliorations Proposées                                                |
 | ------------- | ---- | -------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
 | Structure MVC | 🟡    | • Base MVC présente  • Routes séparées | • Logique métier mélangée  • Pas de services       | • Ajouter une couche service  • Séparer la logique métier              |
 | Dépendances   | 🔴    | • Packages standards utilisés          | • Versions obsolètes  • Pas de gestion de versions | • Mettre à jour les dépendances  • Ajouter un gestionnaire de versions |
