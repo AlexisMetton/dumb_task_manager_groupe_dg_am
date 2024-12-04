@@ -1,7 +1,14 @@
 name: Test application
 
 on: 
-  push: ~
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
   workflow_dispatch: ~
 
 jobs: 
