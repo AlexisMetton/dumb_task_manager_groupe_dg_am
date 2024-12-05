@@ -6,7 +6,9 @@ const router = express.Router();
 router.use(authorizeAdmin);
 
 router.get('/', adminController.listUsers);
-router.post('/update-roles', adminController.updateRoles);
-router.post('/delete/:userId', adminController.deleteUser);
+
+router.put('/user/:id', adminController.updateUser);
+router.delete('/user/:id', adminController.deleteUser);
+router.get('/user/edit/:id', adminController.getEditId);
 
 module.exports = router;

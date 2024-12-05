@@ -43,12 +43,21 @@ const User = {
 
     delete: async (id) => {
         const query = 'DELETE FROM users WHERE id = ?';
-        await pool.execute(query, [id]);
+        const [result] = await pool.execute(query, [id]);
+        if (result.affectedRows === 0) {
+            throw new Error('User not found');
+        }
+        return id;
     },
 
-    updateRoles: async (id, roles) => {
+    update: async (id, roles) => {
         const query = 'UPDATE users SET roles = ? WHERE id = ?';
-        await pool.execute(query, [JSON.stringify(roles), id]);
+        const params = [roles.roles, id];
+        const [result] = await pool.execute(query, params);
+        if (result.affectedRows === 0) {
+            throw new Error('User not found');
+        }
+        return { id, ...roles };
     },
 };
 

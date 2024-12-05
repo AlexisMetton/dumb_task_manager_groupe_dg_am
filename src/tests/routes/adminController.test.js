@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const adminMiddleware = require('../../middlewares/authorizeAdmin');
 const User = require('../../models/user');
+const adminController = require('../../controllers/adminController');
 
 jest.mock('jsonwebtoken');
 jest.mock('../../models/user');
@@ -17,6 +18,10 @@ describe('Admin Middleware and Controller', () => {
             render: jest.fn(),
         };
         next = jest.fn();
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     describe('Middleware Tests', () => {
@@ -85,42 +90,131 @@ describe('Admin Middleware and Controller', () => {
     describe('Admin Controller Tests', () => {
         test('should list all users', async () => {
             const mockUsers = [
-                { id: 1, username: 'user1', roles: ['ROLE_USER'] },
-                { id: 2, username: 'admin', roles: ['ROLE_ADMIN'] },
+                { id: 1, username: 'user1', email: 'user1@example.com', roles: ['ROLE_USER'] },
+                { id: 2, username: 'admin', email: 'admin@example.com', roles: ['ROLE_ADMIN'] },
             ];
 
             User.getAll.mockResolvedValue(mockUsers);
 
-            const adminController = require('../../controllers/adminController');
             await adminController.listUsers(req, res);
 
             expect(User.getAll).toHaveBeenCalled();
-            expect(res.render).toHaveBeenCalledWith('admin', { users: mockUsers });
+            expect(res.render).toHaveBeenCalledWith('admin/admin', {
+                users: mockUsers,
+                error: null,
+                user: req.session.user || null,
+            });
+        });
+
+        test('should handle error when listing users', async () => {
+            User.getAll.mockRejectedValue(new Error('Database error'));
+
+            await adminController.listUsers(req, res);
+
+            expect(User.getAll).toHaveBeenCalled();
+            expect(res.render).toHaveBeenCalledWith('admin/admin', {
+                error: 'Erreur lors de la récupération des utilisateurs.',
+                users: [],
+                user: req.session.user || null,
+            });
         });
 
         test('should delete a user by ID', async () => {
-            req.params = { userId: 1 };
+            req.params = { id: 1 };
 
             User.delete.mockResolvedValue();
 
-            const adminController = require('../../controllers/adminController');
             await adminController.deleteUser(req, res);
 
             expect(User.delete).toHaveBeenCalledWith(1);
-            expect(res.redirect).toHaveBeenCalledWith('/admin');
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                success: true,
+                message: 'Utilisateur supprimé avec succès.',
+            });
         });
 
-        test('should update user roles', async () => {
-            req.params = { userId: 1 };
+        test('should handle error when deleting a non-existent user', async () => {
+            req.params = { id: 999 };
+            User.delete.mockRejectedValue(new Error('User not found'));
+
+            await adminController.deleteUser(req, res);
+
+            expect(User.delete).toHaveBeenCalledWith(999);
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({
+                success: false,
+                error: 'Utilisateur introuvable.',
+            });
+        });
+
+        test('should update user roles successfully', async () => {
+            req.params = { id: 1 };
             req.body = { roles: ['ROLE_ADMIN'] };
 
-            User.updateRoles.mockResolvedValue();
+            const mockUser = { id: 1, roles: ['ROLE_ADMIN'] };
 
-            const adminController = require('../../controllers/adminController');
-            await adminController.updateRoles(req, res);
+            User.findById.mockResolvedValue(mockUser);
+            User.update.mockResolvedValue(mockUser);
 
-            expect(User.updateRoles).toHaveBeenCalledWith(1, ['ROLE_ADMIN']);
-            expect(res.redirect).toHaveBeenCalledWith('/admin');
+            await adminController.updateUser(req, res);
+
+            expect(User.findById).toHaveBeenCalledWith(1);
+            expect(User.update).toHaveBeenCalledWith(1, { roles: JSON.stringify(['ROLE_ADMIN']) });
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                success: true,
+                message: 'Rôles mis à jour avec succès.',
+                user: mockUser,
+            });
+        });
+
+        test('should handle error when updating roles for a non-existent user', async () => {
+            req.params = { id: 999 };
+            req.body = { roles: ['ROLE_ADMIN'] };
+
+            User.findById.mockResolvedValue(null);
+
+            await adminController.updateUser(req, res);
+
+            expect(User.findById).toHaveBeenCalledWith(999);
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({
+                success: false,
+                error: 'Utilisateur introuvable.',
+            });
+        });
+
+        test('should fetch a user for editing by ID', async () => {
+            req.params = { id: 1 };
+
+            const mockUser = { id: 1, username: 'user1', roles: ['ROLE_USER'] };
+
+            User.findById.mockResolvedValue(mockUser);
+
+            await adminController.getEditId(req, res);
+
+            expect(User.findById).toHaveBeenCalledWith(1);
+            expect(res.render).toHaveBeenCalledWith('admin/edit-user', {
+                editUser: mockUser,
+                error: null,
+                user: req.session.user || null,
+            });
+        });
+
+        test('should handle error when fetching a non-existent user for editing', async () => {
+            req.params = { id: 999 };
+
+            User.findById.mockResolvedValue(null);
+
+            await adminController.getEditId(req, res);
+
+            expect(User.findById).toHaveBeenCalledWith(999);
+            expect(res.render).toHaveBeenCalledWith('admin', {
+                error: 'Utilisateur introuvable.',
+                users: [],
+                user: req.session.user || null,
+            });
         });
     });
 });

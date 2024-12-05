@@ -43,9 +43,9 @@
                                    class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     Modifier
                                 </a>
-                                <a href="/tasks/delete/<%= task.id %>" 
-                                   class="px-3 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')">
+                                <a href="#" 
+                                    onclick="deleteTask(<%= task.id %>); return false;" 
+                                    class="px-3 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                     Supprimer
                                 </a>
                             </div>
@@ -84,14 +84,24 @@
 
     <script>
     function updateTaskStatus(taskId, completed) {
+        const taskTitleElement = document.querySelector(`#task-${taskId} + div h3`);
+        const taskDescriptionElement = document.querySelector(`#task-${taskId} + div p`);
+
+        const title = taskTitleElement ? taskTitleElement.textContent.trim() : '';
+        const description = taskDescriptionElement ? taskDescriptionElement.textContent.trim() : '';
+
+        const taskData = {
+            title,
+            description,
+            completed: completed ? 1 : 0
+        };
+
         fetch(`/tasks/${taskId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                completed: completed ? 1 : 0
-            })
+            body: JSON.stringify(taskData)
         })
         .then(response => {
             if (!response.ok) {
@@ -102,6 +112,26 @@
         .catch(error => {
             console.error('Error:', error);
             alert('Erreur lors de la mise à jour du statut de la tâche');
+        });
+    }
+
+    function deleteTask(taskId) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+            return;
+        }
+
+        fetch(`/tasks/${taskId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la suppression de la tâche');
+            }
+            window.location.reload(); // Recharge la page pour afficher la liste mise à jour
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la suppression de la tâche');
         });
     }
     </script>
