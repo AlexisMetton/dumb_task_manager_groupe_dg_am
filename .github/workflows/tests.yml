@@ -18,25 +18,44 @@ jobs:
         with:
             ref: ${{ github.sha }}
 
-      - name: Create .env file
-        run: |
-          echo HOST=${{ secrets.HOST }} >> ./src/.env
-          echo DATABASE=${{ secrets.DATABASE }} >> ./src/.env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> ./src/.env
-          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> ./src/.env
-          echo PASSWORD=${{ secrets.PASSWORD }} >> ./src/.env
-          echo PORT=${{ secrets.PORT }} >> ./src/.env
-          echo SECRET=${{ secrets.SECRET }} >> ./src/.env
-          echo USER=${{ secrets.USER }} >> ./src/.env
-
       - name: Install deps
         working-directory: ./src
-        run: npm i
+        run: |
+          echo HOST=${{ secrets.HOST }} >> ./src/.env
+          npm i
+          
+        env: 
+          HOST: ${{ secrets.HOST }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+          SECRET: ${{ secrets.SECRET }}
+          USER: ${{ secrets.USER }}
 
       - name: Run model tests
         run: npm run test:models
         working-directory: ./src
+        env: 
+          HOST: ${{ secrets.HOST }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+          SECRET: ${{ secrets.SECRET }}
+          USER: ${{ secrets.USER }}
 
       - name: Run route tests
         run: npm run test:routes
         working-directory: ./src
+        env: 
+          HOST: ${{ secrets.HOST }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+          SECRET: ${{ secrets.SECRET }}
+          USER: ${{ secrets.USER }}
