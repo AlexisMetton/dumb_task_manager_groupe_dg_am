@@ -21,7 +21,7 @@ jobs:
       - name: Install deps
         working-directory: ./src
         run: |
-          echo HOST=${{ secrets.HOST }} >> ./src/.env
+          echo HOST=${{ secrets.HOST }}
           npm i
           
         env: 
