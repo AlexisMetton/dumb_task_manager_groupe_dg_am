@@ -42,6 +42,9 @@ const User = {
     },
 
     delete: async (id) => {
+        const queryTasks = 'DELETE FROM tasks WHERE user_id = ?';
+        await pool.execute(queryTasks, [id]);
+
         const query = 'DELETE FROM users WHERE id = ?';
         const [result] = await pool.execute(query, [id]);
         if (result.affectedRows === 0) {
