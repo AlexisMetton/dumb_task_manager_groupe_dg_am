@@ -57,9 +57,18 @@ jobs:
 
       - name: Start Server
         working-directory: ./src
-        run: npm start &
+        run: npm run start
         env:
           PORT: 3001
+
+      - name: Wait for Server
+        run: |
+          echo "Waiting for server to start..."
+          until curl -s http://localhost:3001 > /dev/null; do
+            echo "Server is not ready yet. Retrying..."
+            sleep 3
+          done
+          echo "Server is ready!"
 
       - name: Run Cypress tests
         run: npm run test:e2e
