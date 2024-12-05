@@ -28,15 +28,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
         with:
-          node-version: 16
+          ref: ${{ github.sha }}
 
       - name: Install dependencies
-        run: npm install
+        working-directory: ./src
+        run: |
+          echo HOST=${{ secrets.HOST }}
+          npm i
 
       - name: Wait for MySQL
         run: |
