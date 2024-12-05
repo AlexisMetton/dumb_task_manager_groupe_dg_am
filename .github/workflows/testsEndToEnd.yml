@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: ''
           MYSQL_DATABASE: task_manager
         ports:
           - 3306:3306
@@ -49,10 +49,14 @@ jobs:
         run: |
           node ./src/config/initializeDatabase.js
         env:
-          HOST: 127.0.0.1
-          USER: root
-          PASSWORD: ''
-          DB_PORT: 3306
+          HOST: ${{ secrets.HOST }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+          SECRET: ${{ secrets.SECRET }}
+          USER: ${{ secrets.USER }}
 
       - name: Start Server
         working-directory: ./src
