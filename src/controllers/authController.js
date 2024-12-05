@@ -9,7 +9,10 @@ module.exports = {
             const user = await User.findByUsername(username);
 
             if (!user) {
-                return res.status(400).send('Invalid username or password.');
+                return res.render('auth/login', { 
+                    error: 'Invalid username or password.',
+                    user: req.session.user || null 
+                });
             }
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -26,7 +29,11 @@ module.exports = {
                 req.session.user = { id: user.id, username: user.username, roles: user.roles };
                 res.redirect('/tasks');
             } else {
-                res.status(400).send('Invalid username or password.');
+                res.render('auth/login', { 
+                    error: 'Invalid username or password.',
+                    user: req.session.user || null 
+                });
+                //res.status(400).send('Invalid username or password.');
             }
         } catch (err) {
             res.status(500).json({ message: 'Erreur interne du serveur.' });

@@ -55,6 +55,33 @@ describe('Auth Routes', () => {
         expect(response.headers.location).toBe('/tasks');
     });
 
+    test('should return error when logging in with invalid username', async () => {
+        User.findByUsername.mockResolvedValue(null);
+
+        const response = await request(app).post('/login').send({
+            username: 'invalidUser',
+            password: 'test',
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.text).toContain('Invalid username or password.');
+        expect(User.findByUsername).toHaveBeenCalledWith('invalidUser');
+    });
+
+    test('should return error when logging in with incorrect password', async () => {
+        const hashedPassword = await bcrypt.hash('test', 10);
+        const mockUser = { id: 1, username: 'test', password: hashedPassword, roles: ['ROLE_USER'] };
+        User.findByUsername.mockResolvedValue(mockUser);
+
+        const response = await request(app).post('/login').send({
+            username: 'test',
+            password: 'wrongPassword',
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.text).toContain('Invalid username or password.');
+    });
+
     test('should logout the logged-in user', async () => {
         const hashedPassword = await bcrypt.hash('test', 10);
         const mockUser = { id: 1, username: 'test', password: hashedPassword };

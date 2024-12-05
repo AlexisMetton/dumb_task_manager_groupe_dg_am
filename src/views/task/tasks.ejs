@@ -22,7 +22,7 @@
             <div class="space-y-4">
                 <% tasks.forEach(task => { %>
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-green-500 transition-colors duration-200">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between" name="tasks">
                             <div class="flex items-center space-x-4 flex-1">
                                 <input type="checkbox" 
                                        id="task-<%= task.id %>" 
@@ -30,7 +30,7 @@
                                        <%= task.completed ? 'checked' : '' %>
                                        onchange="updateTaskStatus(<%= task.id %>, this.checked)">
                                 <div class="flex-1">
-                                    <h3 class="text-lg font-semibold <%= task.completed ? 'line-through text-gray-500' : 'text-gray-900' %>">
+                                    <h3 class="text-lg font-semibold <%= task.completed ? 'line-through text-red-500' : 'text-gray-900' %>">
                                         <%= task.title %>
                                     </h3>
                                     <p class="text-gray-600 mt-1 <%= task.completed ? 'line-through' : '' %>">

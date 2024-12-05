@@ -35,11 +35,25 @@ describe('Tasks Controller', () => {
                 { id: 2, title: 'Task 2', description: 'Desc 2', completed: true, user_id: 1 },
             ];
 
+            const req = {
+                user: { id: 1 },
+                session: { user: { id: 1, username: 'testuser', roles: ['ROLE_USER'] } },
+            };
+            
+            const res = {
+                locals: {},
+                render: jest.fn(),
+            };
+
             Task.getAllByUser.mockResolvedValue(mockTasks);
 
             await tasksController.getAllByUser(req, res);
 
-            expect(Task.getAllByUser).toHaveBeenCalledWith(1);
+            expect(Task.getAllByUser).toHaveBeenCalledWith(req.user.id);
+
+            const remainingTasks = mockTasks.filter(task => !task.completed).length;
+            expect(res.locals.remainingTasks).toBe(remainingTasks);
+
             expect(res.render).toHaveBeenCalledWith('task/tasks', {
                 tasks: mockTasks,
                 error: null,
