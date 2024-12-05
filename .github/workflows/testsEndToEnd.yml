@@ -59,14 +59,14 @@ jobs:
         working-directory: ./src
         run: npm start &
         env:
-          PORT: 3001
-          JWT_SECRET: pasphrase
-          SECRET: taskmanager_secret
-          HOST: localhost
-          USER: root
-          PASSWORD: ''
-          DATABASE: task_manager
-          DB_PORT: 3306
+          HOST: ${{ secrets.HOST }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+          SECRET: ${{ secrets.SECRET }}
+          USER: ${{ secrets.USER }}
 
       - name: Wait for Server
         run: |
