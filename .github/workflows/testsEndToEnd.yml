@@ -55,7 +55,7 @@ jobs:
           DB_PORT: 3306
 
       - name: Run Cypress tests
-        run: npx cypress run
+        run: npm run test:e2e
         env:
           CYPRESS_DB_HOST: 127.0.0.1
           CYPRESS_DB_USER: root
