@@ -47,9 +47,8 @@ jobs:
           echo "Server is ready!"
 
       - name: Initialize Database
-        working-directory: ./src
         run: |
-          node ./config/initializeDatabase.js
+          node ./src/config/initializeDatabase.js
         env:
           HOST: ${{ secrets.HOST }}
           DATABASE: ${{ secrets.DATABASE }}
