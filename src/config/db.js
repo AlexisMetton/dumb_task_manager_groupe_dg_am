@@ -47,6 +47,15 @@ const initializeDatabase = async () => {
             );
         `);
 
+        const hashedPassword = await bcrypt.hash('alex', 10);
+        await connection.query(
+            `
+            INSERT IGNORE INTO users (username, password, email, roles) 
+            VALUES (?, ?, ?, ?);
+            `,
+            ['alex', hashedPassword, 'alex@gmail.com', JSON.stringify(['ROLE_USER'])]
+        );
+
         console.log('Database and tables ensured to exist.');
         connection.release();
     } catch (err) {

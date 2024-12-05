@@ -45,19 +45,6 @@ jobs:
             sleep 3
           done
 
-      - name: Initialize Database
-        run: |
-          node ./src/config/initializeDatabase.js
-        env:
-          HOST: ${{ secrets.HOST }}
-          DATABASE: ${{ secrets.DATABASE }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          PORT: ${{ secrets.PORT }}
-          SECRET: ${{ secrets.SECRET }}
-          USER: ${{ secrets.USER }}
-
       - name: Start Server
         working-directory: ./src
         run: npm start &
