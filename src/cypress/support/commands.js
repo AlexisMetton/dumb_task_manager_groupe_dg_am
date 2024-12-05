@@ -28,7 +28,7 @@
 
 
 Cypress.Commands.add('fillFormAndSubmit', { prevSubject: 'element' }, (subject, data) => {
-    console.log({ subject, data })
+
     Object.entries(data).forEach((entry) => {
         const [key, value] = entry;
         const type = value.type || "input"

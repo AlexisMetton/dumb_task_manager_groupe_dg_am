@@ -27,16 +27,16 @@ module.exports = {
                 req.session.token = token;
 
                 req.session.user = { id: user.id, username: user.username, roles: user.roles };
-                res.redirect('/tasks');
+                return res.redirect('/tasks');
             } else {
-                res.render('auth/login', { 
+                return res.render('auth/login', { 
                     error: 'Invalid username or password.',
                     user: req.session.user || null 
                 });
                 //res.status(400).send('Invalid username or password.');
             }
         } catch (err) {
-            res.status(500).json({ message: 'Erreur interne du serveur.' });
+            return res.status(500).json({ message: 'Erreur interne du serveur.' });
         }
     },
     register: async (req, res) => {
@@ -44,7 +44,10 @@ module.exports = {
         
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ message: 'Veuillez renseigner une adresse email valide.' });
+            return res.render('auth/register', { 
+                error: 'Veuillez renseigner une adresse email valide.',
+                user: req.session.user || null 
+            });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -53,7 +56,10 @@ module.exports = {
             const existingUser = await User.findByUsernameOrEmail(username, email);
 
             if (existingUser) {
-                return res.status(400).json({ message: 'Le nom d\'utilisateur ou l\'email existe déjà.' });
+                return res.render('auth/register', { 
+                    error: 'Le nom d\'utilisateur ou l\'email existe déjà.',
+                    user: req.session.user || null 
+                });
             }
 
             const user = await User.create({ username, password: hashedPassword, email });
@@ -67,10 +73,10 @@ module.exports = {
             req.session.token = token;
 
             req.session.user = { id: user.id, username: user.username, roles: user.roles || ['ROLE_USER'] };
-            console.log('Session created:', req.session); 
-            res.redirect('/tasks');
+
+            return res.redirect('/tasks');
         } catch (err) {
-            res.status(500).json({ message: 'Erreur interne du serveur.' });
+            return res.status(500).json({ message: 'Erreur interne du serveur.' });
         }
     },
     logout: (req, res) => {

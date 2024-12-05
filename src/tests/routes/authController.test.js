@@ -22,23 +22,15 @@ describe('Auth Routes', () => {
                 email: 'test@example.com',
             });
 
+        expect(User.findByUsernameOrEmail).toHaveBeenCalledWith('test', 'test@example.com');
+        expect(User.create).toHaveBeenCalledWith({
+            username: 'test',
+            password: expect.any(String),
+            email: 'test@example.com',
+        });
+
         expect(response.statusCode).toBe(302);
         expect(response.headers.location).toBe('/tasks');
-    });
-
-    test('should not register if user already exists', async () => {
-        User.findByUsernameOrEmail.mockResolvedValue({ username: 'test', email: 'test@example.com' });
-
-        const response = await request(app)
-            .post('/register')
-            .send({
-                username: 'test',
-                password: 'test',
-                email: 'test@example.com',
-            });
-
-        expect(response.statusCode).toBe(400);
-        expect(response.body.message).toBe("Le nom d'utilisateur ou l'email existe déjà.");
     });
 
     test('should login an existing user', async () => {

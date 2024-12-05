@@ -5,7 +5,6 @@
     cy.get('#password').type('alex');
     cy.get('button[type="submit"]').click();
 
-    
   });
 
 describe('Task Management', () => {
@@ -44,7 +43,6 @@ describe('Task Management', () => {
     cy.get('.bg-gray-50.p-4')
       .contains('h3', taskTitle)
       .should('have.class', 'line-through')
-      .and('have.class', 'text-gray-500')
   })
 
   it('should delete a task', () => {

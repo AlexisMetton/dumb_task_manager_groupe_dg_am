@@ -18,7 +18,7 @@
             </div>
 
             <% if (locals.error) { %>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                <div id="message_error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
                     <%= error %>
                 </div>
             <% } %>
@@ -31,6 +31,7 @@
                         </label>
                         <input id="username" 
                                name="username" 
+                               placeholder="Username"
                                type="text" 
                                required 
                                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
@@ -43,6 +44,7 @@
                         <input id="email" 
                                name="email" 
                                type="email" 
+                               placeholder="Email"
                                required 
                                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
                     </div>
@@ -53,6 +55,7 @@
                         </label>
                         <input id="password" 
                                name="password" 
+                               placeholder="Password"
                                type="password" 
                                required 
                                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
@@ -70,12 +73,13 @@
             <div class="text-center">
                 <p class="text-sm text-gray-600">
                     Already have an account? 
-                    <a href="/login" class="font-medium text-green-600 hover:text-green-500">
+                    <a id="link_login" href="/login" class="font-medium text-green-600 hover:text-green-500">
                         Sign in
                     </a>
                 </p>
             </div>
         </div>
     </div>
+    <%- include('../layouts/footer') %>
 </body>
 </html>
