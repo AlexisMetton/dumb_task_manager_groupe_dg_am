@@ -50,6 +50,15 @@ jobs:
         working-directory: ./src
         run: |
           node ./config/initializeDatabase.js
+        env:
+          HOST: ${{ secrets.HOST }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+          SECRET: ${{ secrets.SECRET }}
+          USER: ${{ secrets.USER }}
 
       - name: Run Cypress tests
         run: npm run test:e2e
