@@ -12,6 +12,20 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: task_manager
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,6 +37,22 @@ jobs:
         run: |
           echo HOST=${{ secrets.HOST }}
           npm i
+
+      - name: Wait for MySQL
+        run: |
+          until mysqladmin ping --host=127.0.0.1 --user=root --password=root --silent; do
+            echo "Waiting for MySQL to be ready..."
+            sleep 3
+          done
+
+      - name: Initialize Database
+        run: |
+          node ./src/config/initializeDatabase.js
+        env:
+          HOST: 127.0.0.1
+          USER: root
+          PASSWORD: ''
+          DB_PORT: 3306
 
       - name: Start Server
         working-directory: ./src
@@ -46,19 +76,11 @@ jobs:
           done
           echo "Server is ready!"
 
-      - name: Initialize Database
-        run: |
-          node ./src/config/initializeDatabase.js
-        env:
-          HOST: ${{ secrets.HOST }}
-          DATABASE: ${{ secrets.DATABASE }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          PORT: ${{ secrets.PORT }}
-          SECRET: ${{ secrets.SECRET }}
-          USER: ${{ secrets.USER }}
-
       - name: Run Cypress tests
         run: npm run test:e2e
         working-directory: ./src
+        env:
+          CYPRESS_DB_HOST: 127.0.0.1
+          CYPRESS_DB_USER: root
+          CYPRESS_DB_PASSWORD: ''
+          CYPRESS_DB_NAME: task_manager
