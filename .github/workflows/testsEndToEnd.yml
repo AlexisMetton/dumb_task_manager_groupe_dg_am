@@ -57,7 +57,7 @@ jobs:
 
       - name: Start Server
         working-directory: ./src
-        run: npm run start
+        run: npm start &
         env:
           PORT: 3001
 
