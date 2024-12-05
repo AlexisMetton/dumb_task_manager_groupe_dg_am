@@ -8,8 +8,10 @@ router.use(isAuthenticated);
 
 // Routes pour les tâches
 router.get('/', tasksController.getAllByUser);
+
 router.post('/', tasksController.createTask);
 router.put('/:id', tasksController.updateTask);
 router.delete('/:id', tasksController.deleteTask);
+router.get('/edit/:id', tasksController.getEditId);
 
 module.exports = router;

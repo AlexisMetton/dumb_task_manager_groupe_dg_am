@@ -11,6 +11,9 @@ describe('Tasks Controller', () => {
             user: { id: 1, username: 'testuser' },
             params: {},
             body: {},
+            session: {
+                user: { id: 1, username: 'testuser' },
+            },
         };
         res = {
             status: jest.fn(() => res),
@@ -37,7 +40,11 @@ describe('Tasks Controller', () => {
             await tasksController.getAllByUser(req, res);
 
             expect(Task.getAllByUser).toHaveBeenCalledWith(1);
-            expect(res.render).toHaveBeenCalledWith('dashboard', { tasks: mockTasks, user: req.user });
+            expect(res.render).toHaveBeenCalledWith('task/tasks', {
+                tasks: mockTasks,
+                error: null,
+                user: req.session.user,
+            });
         });
 
         test('should handle errors during task retrieval', async () => {
@@ -46,8 +53,11 @@ describe('Tasks Controller', () => {
             await tasksController.getAllByUser(req, res);
 
             expect(Task.getAllByUser).toHaveBeenCalledWith(1);
-            expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.send).toHaveBeenCalledWith('Erreur lors de la récupération des tâches.');
+            expect(res.render).toHaveBeenCalledWith('task/tasks', {
+                error: 'Erreur lors de la récupération des tâches',
+                tasks: [],
+                user: req.session.user,
+            });
         });
     });
 
@@ -100,7 +110,7 @@ describe('Tasks Controller', () => {
             await tasksController.updateTask(req, res);
 
             expect(Task.update).toHaveBeenCalledWith(1, req.body);
-            expect(res.json).toHaveBeenCalledWith(updatedTask);
+            expect(res.json).toHaveBeenCalledWith({ success: true, task: updatedTask });
         });
 
         test('should handle errors during task update', async () => {
@@ -113,7 +123,7 @@ describe('Tasks Controller', () => {
 
             expect(Task.update).toHaveBeenCalledWith(1, req.body);
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.send).toHaveBeenCalledWith('Task not found');
+            expect(res.json).toHaveBeenCalledWith({ success: false, error: 'Task not found' });
         });
     });
 
@@ -126,7 +136,8 @@ describe('Tasks Controller', () => {
             await tasksController.deleteTask(req, res);
 
             expect(Task.delete).toHaveBeenCalledWith(1);
-            expect(res.redirect).toHaveBeenCalledWith('/tasks');
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({ success: true, message: 'Tâche supprimée avec succès' });
         });
 
         test('should handle errors during task deletion', async () => {
@@ -138,7 +149,38 @@ describe('Tasks Controller', () => {
 
             expect(Task.delete).toHaveBeenCalledWith(1);
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.send).toHaveBeenCalledWith('Task not found');
+            expect(res.json).toHaveBeenCalledWith({ success: false, error: 'Task not found' });
+        });
+    });
+
+    describe('getEditId', () => {
+        test('should retrieve task by ID and render edit page', async () => {
+            req.params = { id: 1 };
+
+            const mockTask = { id: 1, title: 'Task 1', description: 'Desc 1', completed: false };
+
+            Task.getTaskId.mockResolvedValue({ task: mockTask });
+
+            await tasksController.getEditId(req, res);
+
+            expect(Task.getTaskId).toHaveBeenCalledWith(1);
+            expect(res.render).toHaveBeenCalledWith('task/edit-task', {
+                task: mockTask,
+                error: null,
+                user: req.session.user,
+            });
+        });
+
+        test('should handle errors during task retrieval by ID', async () => {
+            req.params = { id: 1 };
+
+            Task.getTaskId.mockRejectedValue(new Error('Task not found'));
+
+            await tasksController.getEditId(req, res);
+
+            expect(Task.getTaskId).toHaveBeenCalledWith(1);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.send).toHaveBeenCalledWith('Erreur lors de la récupération des tâches.');
         });
     });
 });

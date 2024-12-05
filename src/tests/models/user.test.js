@@ -23,6 +23,12 @@ describe('User Model', () => {
             password: 'hashedpassword',
             roles: ['ROLE_USER'],
         });
+        expect(User.create).toHaveBeenCalledWith({
+            username: 'test',
+            email: 'test@example.com',
+            password: 'hashedpassword',
+            roles: ['ROLE_USER'],
+        });
         expect(result).toEqual(mockUser);
     });
 
@@ -31,6 +37,7 @@ describe('User Model', () => {
         User.findByUsername.mockResolvedValue(mockUser);
 
         const result = await User.findByUsername('test');
+        expect(User.findByUsername).toHaveBeenCalledWith('test');
         expect(result).toEqual(mockUser);
     });
 
@@ -39,6 +46,7 @@ describe('User Model', () => {
         User.findByUsernameOrEmail.mockResolvedValue(mockUser);
 
         const result = await User.findByUsernameOrEmail('test', 'test@example.com');
+        expect(User.findByUsernameOrEmail).toHaveBeenCalledWith('test', 'test@example.com');
         expect(result).toEqual(mockUser);
     });
 
@@ -47,23 +55,27 @@ describe('User Model', () => {
         User.findById.mockResolvedValue(mockUser);
 
         const result = await User.findById(1);
+        expect(User.findById).toHaveBeenCalledWith(1);
         expect(result).toEqual(mockUser);
     });
 
     test('should delete a user successfully', async () => {
-        User.delete.mockResolvedValue();
+        User.delete.mockResolvedValue(1);
 
-        await User.delete(1);
+        const result = await User.delete(1);
 
         expect(User.delete).toHaveBeenCalledWith(1);
+        expect(result).toEqual(1);
     });
 
     test('should update user roles successfully', async () => {
-        User.updateRoles.mockResolvedValue();
+        const updatedUser = { id: 1, roles: ['ROLE_ADMIN'] };
+        User.update.mockResolvedValue(updatedUser);
 
-        await User.updateRoles(1, ['ROLE_ADMIN']);
+        const result = await User.update(1, { roles: JSON.stringify(['ROLE_ADMIN']) });
 
-        expect(User.updateRoles).toHaveBeenCalledWith(1, ['ROLE_ADMIN']);
+        expect(User.update).toHaveBeenCalledWith(1, { roles: JSON.stringify(['ROLE_ADMIN']) });
+        expect(result).toEqual(updatedUser);
     });
 
     test('should fetch all users successfully', async () => {
@@ -75,6 +87,7 @@ describe('User Model', () => {
 
         const result = await User.getAll();
 
+        expect(User.getAll).toHaveBeenCalled();
         expect(result).toEqual(mockUsers);
     });
 });
