@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const mysql = require('mysql2/promise');
 
+const bcrypt = require('bcrypt');
+
 const pool = mysql.createPool({
     host: process.env.HOST || 'localhost',
     user: process.env.USER || 'root',
