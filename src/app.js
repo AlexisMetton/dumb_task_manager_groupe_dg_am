@@ -31,13 +31,14 @@ app.set('views', path.join(__dirname, 'views'));
 // Models
 const db = require('./config/db');
 
+const taskCounter = require('./middlewares/taskCount');
+
 // Routes
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 const adminRoutes = require('./routes/admin');
 
-app.get('/', (req, res) => {
-    console.log(req.query);
+app.get('/', taskCounter, (req, res) => {
     res.render('index', { 
         userId: req.query.userId,
         user: req.session.user || null 
@@ -45,7 +46,7 @@ app.get('/', (req, res) => {
 });
 app.use('/', authRoutes);
 app.use('/tasks', taskRoutes);
-app.use('/admin', adminRoutes)
+app.use('/admin', adminRoutes);
 
 
 if (process.env.NODE_ENV !== 'test') {

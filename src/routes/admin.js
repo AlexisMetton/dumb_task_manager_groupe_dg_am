@@ -1,9 +1,11 @@
 const express = require('express');
 const adminController = require('../controllers/adminController');
 const authorizeAdmin = require('../middlewares/authorizeAdmin');
+const taskCounter = require('../middlewares/taskCount');
 const router = express.Router();
 
 router.use(authorizeAdmin);
+router.use(taskCounter);
 
 router.get('/', adminController.listUsers);
 

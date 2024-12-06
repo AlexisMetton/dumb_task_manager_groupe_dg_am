@@ -4,19 +4,19 @@ module.exports = {
     getAllByUser: async (req, res) => {
         try {
             const tasks = await Task.getAllByUser(req.user.id);
+            const remainingTasks = tasks.filter(task => !task.completed).length;
+            res.locals.remainingTasks = remainingTasks;
             res.render('task/tasks', { 
                 tasks: tasks,
                 error: null,
                 user: req.session.user || null 
             });
-            //res.render('dashboard', { tasks, user: req.user });
         } catch (err) {
             return res.render('task/tasks', { 
                 error: 'Erreur lors de la récupération des tâches',
                 tasks: [],
                 user: req.session.user || null 
             });
-            // res.status(500).send('Erreur lors de la récupération des tâches.');
         }
     },
 

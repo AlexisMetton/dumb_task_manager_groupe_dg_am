@@ -6,8 +6,18 @@
             </div>
             <div class="flex space-x-4">
                 <% if (user) { %>
-                    <a href="/tasks" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">My Tasks</a>
-                    <% if (user.isAdmin) { %>
+                    <div class="relative flex">
+                        <a href="/tasks" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                            My Tasks
+                            <% if (locals.remainingTasks > 0) { %>
+                                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                        <%= remainingTasks %>
+                                    </span>
+                                <% } %>
+                        </a>
+                    </div>
+                    
+                    <% if (locals.isAdmin) { %>
                         <a href="/admin" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Admin</a>
                     <% } %>
                     <a href="/logout" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>

@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 
-// Placeholder routes for authentication
-//router.get('/login', (req, res) => res.render('auth/login'));
 router.get('/login', (req, res) => {
     res.render('auth/login', { 
         error: null,
@@ -11,7 +9,7 @@ router.get('/login', (req, res) => {
     });
 });
 router.post('/login', authController.login);
-//router.get('/register', (req, res) => res.render('auth/register'));
+
 router.get('/register', (req, res) => {
     res.render('auth/register', { 
         error: null,
