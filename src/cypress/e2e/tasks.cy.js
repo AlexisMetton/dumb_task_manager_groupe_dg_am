@@ -1,8 +1,9 @@
+
   beforeEach(() => {
     cy.visit('/login');
-    const user = process.env.CREATE_USER || "user"
-    const password = process.env.CREATE_PASSWORD || "DemoPasswword8@"
 
+    const user = Cypress.env('CREATE_USER') || "user"
+    const password = Cypress.env('CREATE_PASSWORD') || "DemoPasswword8@"
 
     cy.get('#username').type(user);
     cy.get('#password').type(password);
@@ -19,12 +20,12 @@ describe('Task Management', () => {
       
       cy.get('form').fillFormAndSubmit({
         title: {text:taskTitle},
-        description: {text:'This is a test task description', type:'textarea'}
+        description: {text:'test_e2e_This is a test task description', type:'textarea'}
       })
 
       cy.get('.bg-gray-50.p-4')
       .should('contain', taskTitle)
-        .and('contain', 'This is a test task description')
+        .and('contain', 'test_e2e_This is a test task description')
     })
 
   it('should mark task as completed', () => {
@@ -33,7 +34,7 @@ describe('Task Management', () => {
     
     cy.get('form').fillFormAndSubmit({
       title: {text:taskTitle},
-      description: {text:'Task to be completed', type:'textarea'}
+      description: {text:'test_e2e_Task to be completed', type:'textarea'}
     })
 
      cy.get('.bg-gray-50.p-4') 

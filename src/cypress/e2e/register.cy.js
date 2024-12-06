@@ -14,9 +14,9 @@ describe('Page Register', () => {
 
   it('should display an error message on failed registration', () => {
     cy.get('form').fillFormAndSubmit({
-      username: { text: process.env.CREATE_USER || "user" },
-      email: { text: process.env.CREATE_EMAIL || "demoUser@demo.com" },
-      password: { text: process.env.CREATE_PASSWORD || "DemoPasswword8@" },
+      username: { text: Cypress.env('CREATE_USER') || "user" },
+      email: { text: Cypress.env('CREATE_EMAIL') || "demoUser@demo.com" },
+      password: { text: Cypress.env('CREATE_PASSWORD') || "DemoPasswword8@" },
     });
 
     cy.get('#message_error').should('be.visible').and('contain.text', 'Le nom d\'utilisateur ou l\'email existe déjà.');
@@ -24,9 +24,9 @@ describe('Page Register', () => {
 
   it('should redirect to /tasks on successful registration', () => {
     cy.get('form').fillFormAndSubmit({
-      username: { text: process.env.INCORRECT_USER || "wronguserdemo" },
-      email: { text: process.env.INCORRECT_EMAIL || "wrongemaildemo@wrongemail.com" },
-      password: { text: process.env.INCORRECT_PASSWORD || "WrongPassword8@" },
+      username: { text: Cypress.env('INCORRECT_USER') || "test_wronguserdemo" },
+      email: { text: Cypress.env('INCORRECT_EMAIL') || "wrongemaildemo@wrongemail.com" },
+      password: { text: Cypress.env('INCORRECT_PASSWORD') || "WrongPassword8@" },
     });
 
     cy.url().should('include', '/tasks');
