@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const validatePassword = require('../utils/passwordTestFunc');
 
 module.exports = {
     login: async (req, res) => {
@@ -9,7 +10,10 @@ module.exports = {
             const user = await User.findByUsername(username);
 
             if (!user) {
-                return res.status(400).send('Invalid username or password.');
+                return res.render('auth/login', { 
+                    error: 'Invalid username or password.',
+                    user: req.session.user || null 
+                });
             }
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -24,12 +28,16 @@ module.exports = {
                 req.session.token = token;
 
                 req.session.user = { id: user.id, username: user.username, roles: user.roles };
-                res.redirect('/tasks');
+                return res.redirect('/tasks');
             } else {
-                res.status(400).send('Invalid username or password.');
+                return res.render('auth/login', { 
+                    error: 'Invalid username or password.',
+                    user: req.session.user || null 
+                });
+                //res.status(400).send('Invalid username or password.');
             }
         } catch (err) {
-            res.status(500).json({ message: 'Erreur interne du serveur.' });
+            return res.status(500).json({ message: 'Erreur interne du serveur.' });
         }
     },
     register: async (req, res) => {
@@ -37,16 +45,31 @@ module.exports = {
         
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ message: 'Veuillez renseigner une adresse email valide.' });
+            return res.render('auth/register', { 
+                error: 'Veuillez renseigner une adresse email valide.',
+                user: req.session.user || null 
+            });
+        }
+        const responsePV = validatePassword(password)
+        if (responsePV.isValid){
+            passwordValide = password
+        } else {
+            return res.render('auth/register', { 
+                error: responsePV.message,
+                user: req.session.user || null 
+            });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(passwordValide, 10);
 
         try {
             const existingUser = await User.findByUsernameOrEmail(username, email);
 
             if (existingUser) {
-                return res.status(400).json({ message: 'Le nom d\'utilisateur ou l\'email existe déjà.' });
+                return res.render('auth/register', { 
+                    error: 'Le nom d\'utilisateur ou l\'email existe déjà.',
+                    user: req.session.user || null 
+                });
             }
 
             const user = await User.create({ username, password: hashedPassword, email });
@@ -60,10 +83,10 @@ module.exports = {
             req.session.token = token;
 
             req.session.user = { id: user.id, username: user.username, roles: user.roles || ['ROLE_USER'] };
-            console.log('Session created:', req.session); 
-            res.redirect('/tasks');
+
+            return res.redirect('/tasks');
         } catch (err) {
-            res.status(500).json({ message: 'Erreur interne du serveur.' });
+            return res.status(500).json({ message: 'Erreur interne du serveur.' });
         }
     },
     logout: (req, res) => {

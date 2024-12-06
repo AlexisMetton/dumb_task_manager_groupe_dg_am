@@ -61,6 +61,7 @@ Task Manager Application est une application web permettant de gérer des tâche
     DATABASE=task_manager
     JWT_SECRET=your-secret-key
     SECRET=your-session-secret
+    ... // voir le .env.example
    ```
 4. Démarrer l'application
    ```bash
