@@ -260,8 +260,10 @@
        app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
        ```
 ---
+
 ### Conclusion
-| Type d'Attaque             | Localisation du Test                              | Méthode d'Attaque                                                                                                                                                                                                 | Résultat         | Impact                                                                                                                                                          |
+
+| Type d'Attaque | Localisation du Test | Méthoded'Attaque | Résultat | Impact |
 | -------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Cross-Site Scripting (XSS) | • Formulaire de création de tâche<br>• Champ titre<br>• Champ description | • Injection de `<script>alert('XSS')</script>` dans le titre<br>• Injection de `<img src="x" onerror="alert('XSS')">` dans la description                                                                         | 🟢 Protégé       | • Les balises HTML sont échappées.<br>• Aucun code JavaScript malveillant n'est exécuté.<br>• Indique une gestion correcte des sorties HTML.                      |
 | Injection SQL              | • Page de connexion<br>• Page d'inscription<br>• Création de tâches      | • Tentative avec `' OR '1'='1` dans le login<br>• Requête POST avec payload malveillant sur `/tasks`                                                                      | 🟡 Partiellement | • Les routes de connexion et d'inscription sont protégées grâce à des requêtes préparées.<br>• La création de tâches est vulnérable à l'injection SQL.            |
