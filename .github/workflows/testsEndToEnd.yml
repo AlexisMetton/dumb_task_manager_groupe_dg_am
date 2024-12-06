@@ -19,7 +19,6 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ secrets.PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DATABASE }}
           MYSQL_USER: ${{ secrets.USER }}
-          MYSQL_PASSWORD: ${{ secrets.PASSWORD }}
         ports:
           - 3306:3306
         options: >-
