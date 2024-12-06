@@ -6,7 +6,7 @@ const mysql = require('mysql2/promise');
         host: process.env.HOST || 'localhost',
         user: process.env.USER || 'root',
         password: process.env.PASSWORD || '',
-        database: process.env.DATABASE || 'task_manager_demo',
+        database: process.env.DATABASE || 'task_manager',
     });
 
     try {
