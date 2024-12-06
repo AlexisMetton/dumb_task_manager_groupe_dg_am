@@ -27,7 +27,7 @@ Task Manager Application est une application web permettant de gérer des tâche
 
 - **Backend** : Node.js, Express.js
 - **Base de données** : MySQL
-- **Tests** : Jest, Supertest
+- **Tests** : Jest, Supertest, Cypress
 - **Authentification** : Sessions (Express-session) et Tokens JWT
 - **CI/CD** : GitHub Actions
 

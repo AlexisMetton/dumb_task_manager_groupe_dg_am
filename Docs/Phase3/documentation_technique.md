@@ -117,7 +117,7 @@ src/
 - **Backend** : Node.js, Express.js
 - **Frontend** : Tailwind
 - **Base de données** : MySQL
-- **Tests** : Jest, Supertest
+- **Tests** : Jest, Supertest, Cypress
 - **Authentification** : Sessions (Express-session) et Tokens JWT
 - **CI/CD** : GitHub Actions
 
