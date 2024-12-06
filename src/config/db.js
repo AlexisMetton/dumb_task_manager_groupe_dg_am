@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const pool = mysql.createPool({
     host: process.env.HOST || 'localhost',
     user: process.env.USER || 'root',
-    password: process.env.PASSWORD || '',
+    password: process.env.PASSWORD || 'root',
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
@@ -16,13 +16,15 @@ const pool = mysql.createPool({
 
 const initializeDatabase = async () => {
     try {
+        const database = process.env.DATABASE || "task_manager_demo";
+
         const connection = await pool.getConnection();
 
         // Create database if not exists
-        await connection.query(`CREATE DATABASE IF NOT EXISTS task_manager`);
+        await connection.query(`CREATE DATABASE IF NOT EXISTS ${database}`);
 
         // Switch to the database
-        await connection.query(`USE task_manager`);
+        await connection.query(`USE ${database}`);
 
         // Create users table
         await connection.query(`
@@ -49,13 +51,17 @@ const initializeDatabase = async () => {
             );
         `);
 
-        const hashedPassword = await bcrypt.hash('alex', 10);
+        const user = process.env.CREATE_USER || "user"
+        const email = process.env.CREATE_EMAIL || "demoUser@demo.com"
+        const password = process.env.CREATE_PASSWORD || "DemoPasswword8@"
+        const role = process.env.CREATE_ROLE || ['ROLE_USER']
+        const hashedPassword = await bcrypt.hash(password, 10);
         await connection.query(
             `
             INSERT IGNORE INTO users (username, password, email, roles) 
             VALUES (?, ?, ?, ?);
             `,
-            ['alex', hashedPassword, 'alex@gmail.com', JSON.stringify(['ROLE_USER'])]
+            [user, hashedPassword, email, JSON.stringify(role)]
         );
 
         console.log('Database and tables ensured to exist.');

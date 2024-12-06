@@ -12,8 +12,8 @@ describe('Page Login', () => {
 
   it('should display an error message on failed login', () => {
     cy.get('form').fillFormAndSubmit({
-      username: {text:"wronguser"},
-      password: {text:'wrongpassword'}
+      username: { text: process.env.INCORRECT_USER || "wronguserdemo" },
+      password: { text: process.env.INCORRECT_PASSWORD || "WrongPassword8@" },
     })
 
     cy.get('#message_error').should('be.visible').and('contain.text', 'Invalid username or password.');
@@ -21,8 +21,8 @@ describe('Page Login', () => {
 
   it('should redirect to /tasks on successful login', () => {
     cy.get('form').fillFormAndSubmit({
-      username: {text:"alex"},
-      password: {text:'alex'}
+      username: { text: process.env.CREATE_USER || "user" },
+      password: { text: process.env.CREATE_PASSWORD || "DemoPasswword8@" },
     })
 
     cy.url().should('include', '/tasks');

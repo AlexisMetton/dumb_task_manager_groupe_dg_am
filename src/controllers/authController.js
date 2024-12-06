@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const validatePassword = require('../utils/passwordTestFunc');
 
 module.exports = {
     login: async (req, res) => {
@@ -49,8 +50,17 @@ module.exports = {
                 user: req.session.user || null 
             });
         }
+        const responsePV = validatePassword(password)
+        if (responsePV.isValid){
+            passwordValide = password
+        } else {
+            return res.render('auth/register', { 
+                error: responsePV.message,
+                user: req.session.user || null 
+            });
+        }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(passwordValide, 10);
 
         try {
             const existingUser = await User.findByUsernameOrEmail(username, email);

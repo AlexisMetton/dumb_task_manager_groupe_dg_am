@@ -1,8 +1,11 @@
   beforeEach(() => {
     cy.visit('/login');
+    const user = process.env.CREATE_USER || "user"
+    const password = process.env.CREATE_PASSWORD || "DemoPasswword8@"
 
-    cy.get('#username').type('alex');
-    cy.get('#password').type('alex');
+
+    cy.get('#username').type(user);
+    cy.get('#password').type(password);
     cy.get('button[type="submit"]').click();
 
   });
